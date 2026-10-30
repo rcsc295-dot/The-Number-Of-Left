@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 128 136">
+  <!-- Generator: Adobe Illustrator 30.8.2, SVG Export Plug-In . SVG Version: 2.1.4 Build 7)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #315247;
+      }
+
+      .st1 {
+        stroke: #233e35;
+        stroke-width: 8.8px;
+      }
+
+      .st1, .st2, .st3, .st4, .st5, .st6, .st7 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .st1, .st4, .st5, .st6, .st7 {
+        fill: none;
+      }
+
+      .st2 {
+        stroke-width: 2.4px;
+      }
+
+      .st2, .st3 {
+        fill: #eee9da;
+      }
+
+      .st2, .st3, .st4 {
+        stroke: #315247;
+      }
+
+      .st3 {
+        stroke-width: 3.2px;
+      }
+
+      .st4 {
+        stroke-width: 9.2px;
+      }
+
+      .st5 {
+        stroke-width: 3.6px;
+      }
+
+      .st5, .st6 {
+        stroke: #eee9da;
+      }
+
+      .st6 {
+        stroke-width: 6px;
+      }
+
+      .st8 {
+        fill: #233e35;
+      }
+
+      .st7 {
+        stroke: #bcc5b6;
+        stroke-width: 2.8px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1" data-asset="father">
+    <g id="Legs">
+      <path class="st1" d="M43.11,78.92l-4,24-4,16"/>
+      <path class="st1" d="M59.11,78.92l4,24,4,16"/>
+    </g>
+    <path id="Neck" class="st2" d="M45.11,26.92h12l2,16h-16l2-16Z"/>
+    <circle id="Head" class="st3" cx="51.11" cy="18.92" r="14"/>
+    <path id="Hair" class="st8" d="M35.84,10.92C38.5.26,46.5-2.41,59.84,2.92l8,8-16-4-16,4Z"/>
+    <path id="Jacket" class="st0" d="M35.11,34.92l-8,12,8,32h32l8-32-8-12h-32Z"/>
+    <path id="Lapels" class="st5" d="M43.11,36.47l8,25.77,8-25.77M51.11,62.23v14.72"/>
+    <path id="Sleeves" class="st4" d="M35.11,42.92l-12,28M67.11,42.92l12,28"/>
+    <line id="Pocket" class="st7" x1="59.11" y1="58.92" x2="67.11" y2="58.92"/>
+    <path id="Hands" class="st6" d="M23.11,70.92v8M79.11,70.92v8"/>
+  </g>
+</svg>

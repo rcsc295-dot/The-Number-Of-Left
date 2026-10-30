@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#EEE9DA" />
+        <meta
+            name="description"
+            content="The Number Left — an interactive artwork about people, recognition, and meeting again."
+        />
+        <title>The Number Left · Version 2.3</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23eee9da'/%3E%3Ctext x='7' y='23' fill='%23233e35' font-family='serif' font-size='23'%3E0%3C/text%3E%3C/svg%3E"
+        />
+        <!-- Local styles and ordered scripts work offline without a build step. -->
+        <link rel="stylesheet" href="styles/base.css" />
+        <link rel="stylesheet" href="styles/panels.css" />
+        <link rel="stylesheet" href="styles/guidance.css" />
+        <link rel="stylesheet" href="styles/information.css" />
+    </head>
+    <body>
+        <canvas
+            id="stage"
+            tabindex="0"
+            aria-label="The Number Left. You are the figure with a circle. Move with WASD, arrow keys, or click in the world. J takes, K gives. Escape pauses."
+            >Canvas 2D support is required.</canvas
+        >
+        <header id="game-header" hidden>
+            <div class="wordmark" id="wordmark" hidden>The Number Left.</div>
+            <div class="tools">
+                <button id="relationships" data-panel="relationships" hidden>
+                    Relationships</button
+                ><button
+                    id="pause"
+                    class="icon-button"
+                    hidden
+                    aria-label="Pause"
+                    aria-pressed="false"
+                    title="Pause (Esc)"
+                >
+                    ⏸</button
+                ><button
+                    id="help"
+                    class="icon-button"
+                    data-panel="instructions"
+                    aria-label="Instructions"
+                    title="Instructions"
+                >
+                    ?
+                </button>
+            </div>
+        </header>
+        <button
+            id="control"
+            hidden
+            data-panel="control"
+            aria-expanded="false"
+            aria-controls="control-panel"
+        >
+            ▤ &nbsp; CONTROL
+        </button>
+        <section id="title-screen" class="overlay" aria-labelledby="title">
+            <div class="title-card">
+                <h1 id="title">THE NUMBER LEFT</h1>
+                <button id="start" class="primary">PLAY</button>
+                <p class="playing-time">
+                    playing time: approximately 5–8 minutes
+                </p>
+                <div class="menu-actions">
+                    <button id="open-achievements" class="small-button">
+                        ACHIEVEMENTS
+                    </button>
+                    <button class="small-button" data-panel="instructions">
+                        INSTRUCTIONS</button
+                    ><button class="small-button" data-panel="credits">
+                        CREDITS
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section
+            id="achievements-screen"
+            class="overlay"
+            hidden
+            aria-labelledby="achievements-title"
+        >
+            <div class="achievements-card">
+                <p class="eyebrow">The Number Left · collected endings</p>
+                <h2 id="achievements-title" tabindex="-1">ACHIEVEMENTS</h2>
+                <div class="achievement-totals">
+                    <p id="achievement-count"></p>
+                    <p id="achievement-locked"></p>
+                </div>
+                <ul id="achievement-list"></ul>
+                <p id="achievement-storage" hidden role="status"></p>
+                <button id="achievements-home" class="primary">
+                    Return to Home
+                </button>
+            </div>
+        </section>
+        <section
+            id="quote-screen"
+            class="overlay"
+            hidden
+            aria-label="Opening quote"
+        >
+            <div class="quote-card">
+                <blockquote id="quote-text"></blockquote>
+                <p id="quote-author"></p>
+                <p id="quote-source"></p>
+                <button class="small-button" id="quote-skip">
+                    Continue · click or press Enter
+                </button>
+            </div>
+        </section>
+        <section
+            id="end-screen"
+            class="overlay"
+            hidden
+            aria-labelledby="end-title"
+        >
+            <div class="title-card">
+                <p id="end-caption" class="eyebrow">The Number Left</p>
+                <h1 id="end-title">The Number<br /><em>Left.</em></h1>
+                <div class="rule"></div>
+                <div class="menu-actions">
+                    <button id="restart-end" class="primary">Restart</button>
+                    <button id="home-end" class="primary">
+                        Return to Home
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section
+            id="pause-screen"
+            class="overlay"
+            hidden
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pause-title"
+        >
+            <div>
+                <p class="eyebrow">Take your time</p>
+                <h2 id="pause-title">The world can wait.</h2>
+                <button id="resume" class="primary">Resume</button>
+                <div class="menu-actions">
+                    <button id="restart-pause" class="small-button">
+                        Restart</button
+                    ><button id="home-pause" class="small-button">
+                        Return to Home</button
+                    ><button class="small-button" data-panel="instructions">
+                        Instructions</button
+                    ><button class="small-button" data-panel="credits">
+                        Credits
+                    </button>
+                </div>
+            </div>
+        </section>
+        <aside
+            id="instructions-panel"
+            class="panel wide"
+            hidden
+            role="dialog"
+            aria-labelledby="instructions-title"
+        >
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">A few things to know</p>
+                    <h2 id="instructions-title">Instructions</h2>
+                </div>
+                <button data-close-panel aria-label="Close instructions">
+                    Close ×
+                </button>
+            </div>
+            <div class="instruction-keys">
+                <span>MOVE<strong>WASD or click</strong></span
+                ><span>TAKE<strong>J</strong></span
+                ><span>GIVE<strong>K</strong></span>
+            </div>
+            <div class="rules">
+                <p>
+                    Each person carries a number showing how many encounters
+                    remain.
+                </p>
+                <p>
+                    J takes one encounter from an unprotected person. Blood
+                    relatives and letter targets can receive time, but cannot be
+                    taken from.
+                </p>
+                <p>K gives one stored encounter.</p>
+                <p>
+                    When someone’s number reaches 0, they will no longer return.
+                </p>
+                <p>
+                    A successful K · Give that raises a stranger’s number to
+                    exactly
+                    <span id="friend-rule">5</span> establishes a friendship. It
+                    remains a friendship as their number changes. Spawning at 5
+                    does not count. Every four gifts separately renews temporary
+                    following.
+                </p>
+                <p><em>Some things are hidden.</em></p>
+            </div>
+            <p>
+                Click to move; WASD immediately takes over. Clicking never takes
+                or gives.<br />Release J or K before pressing again.<br />Use ⏸
+                to pause, ▶ to resume, and ? for these instructions.
+            </p>
+        </aside>
+        <aside
+            id="relationships-panel"
+            class="panel wide"
+            hidden
+            role="dialog"
+            aria-labelledby="relationships-title"
+        >
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">Friendships you have established</p>
+                    <h2 id="relationships-title">Relationships</h2>
+                </div>
+                <button data-close-panel aria-label="Close relationships">
+                    Close ×
+                </button>
+            </div>
+            <p>The world continues while you look.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Person</th>
+                            <th>Relationship</th>
+                            <th>Left</th>
+                            <th>Gifted</th>
+                            <th>Met</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relationship-rows"></tbody>
+                </table>
+            </div>
+            <p id="relationship-empty">
+                No established friendships yet. Give to a stranger until their
+                number reaches 5.
+            </p>
+        </aside>
+        <aside
+            id="control-panel"
+            class="panel"
+            hidden
+            role="dialog"
+            aria-labelledby="control-title"
+        >
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">Version 2.3 · testing remote</p>
+                    <h2 id="control-title">Control Panel</h2>
+                </div>
+                <button data-close-panel aria-label="Close control panel">
+                    Close ×
+                </button>
+            </div>
+            <div id="developer-controls">
+                <p id="control-world"></p>
+                <div id="character-selection">
+                    <label class="sr-only" for="selected-person"
+                        >Selected character</label
+                    ><select id="selected-person">
+                        <option value="">Select a person or letter</option>
+                    </select>
+                    <p id="selected-info">No selected character.</p>
+                </div>
+                <div id="control-sections"></div>
+                <p id="control-status" role="status" aria-live="polite"></p>
+            </div>
+        </aside>
+        <aside
+            id="credits-panel"
+            class="panel"
+            hidden
+            role="dialog"
+            aria-labelledby="credits-title"
+        >
+            <div class="panel-head">
+                <div>
+                    <p class="eyebrow">Source &amp; inspiration</p>
+                    <h2 id="credits-title">Made of meetings.</h2>
+                </div>
+                <button data-close-panel aria-label="Close credits">
+                    Close ×
+                </button>
+            </div>
+            <p>
+                <strong>The Number Left</strong><br />Created by Haoyu Chen.<br />Version
+                2.3 · October 2026
+            </p>
+            <p>
+                Character and world architecture informed by
+                <a
+                    href="https://github.com/ncase/wbwwb"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Nicky Case’s <em>We Become What We Behold</em></a
+                >: independent walkers, layered figures, depth ordering, and
+                staged scenes.
+            </p>
+            <p>
+                Conceptual inspiration: Friedrich Nietzsche — Eternal
+                Recurrence; Henri Poincaré — Poincaré Recurrence.
+            </p>
+            <p>
+                Original character drawings and typographic animation. Walking
+                hop and spring animation adapted from Nicky Case’s
+                <em>We Become What We Behold</em> (CC0 1.0). SVG.js 3.2.5 is
+                bundled under the
+                <a href="vendor/LICENSE.svgjs.txt">MIT licence</a>. The adapted
+                animation comes from
+                <a
+                    href="https://github.com/ncase/wbwwb/blob/7c68c7e44e66b5be95ebd07d22391de707090397/js/game/Peep.js"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >the pinned Peep.js source</a
+                >. The hop and spring run inside the existing delta-time update;
+                no WBWWB artwork or audio is included.
+            </p>
+        </aside>
+        <section
+            id="information-panel"
+            hidden
+            aria-labelledby="information-title"
+        >
+            <div class="tv-antenna" aria-hidden="true"><i></i><i></i></div>
+            <div
+                id="tv-screen"
+                tabindex="0"
+                role="region"
+                aria-label="Television narrative"
+            >
+                <div class="information-meta">
+                    <span id="collection-tracker" hidden
+                        >COLLECTED <b id="collection-number">0</b> /
+                        <span id="collection-goal">50</span></span
+                    ><span>THE PEOPLE WE KEEP</span>
+                </div>
+                <h2 id="information-title">The people who remain</h2>
+                <div
+                    id="six-seven-scoreboard"
+                    hidden
+                    aria-label="Six Seven discovery"
+                >
+                    <span id="score-six">6</span
+                    ><span aria-hidden="true">/</span
+                    ><span id="score-seven">?</span>
+                </div>
+                <p id="information-text" role="status" aria-live="polite"></p>
+                <div id="information-actions"></div>
+                <div id="environment-actions" aria-label="Visit a place">
+                    <button data-place="car">Car</button
+                    ><button data-place="house">Home</button
+                    ><button data-place="city">Different city</button>
+                </div>
+            </div>
+            <div class="tv-stand" aria-hidden="true"></div>
+        </section>
+        <div id="demo-controls" hidden>
+            <button id="demo-skip" class="small-button">
+                Skip demonstration · Enter
+            </button>
+        </div>
+        <aside id="family-warning" hidden role="status" aria-live="polite">
+            <p>This time cannot be taken.</p>
+            <p>Try giving a meeting instead.</p>
+        </aside>
+        <div id="nearby-controls" hidden>
+            <span id="nearby-take">J · Take</span
+            ><span id="nearby-give">K · Give</span>
+        </div>
+        <div id="hint" role="status" aria-live="polite"></div>
+        <pre id="debug" hidden></pre>
+        <footer id="game-footer" hidden>
+            <span id="footer-note">J take · K give</span>
+            <div
+                id="held-meter"
+                hidden
+                role="status"
+                aria-label="0 encounters held"
+            >
+                <div class="held-label">
+                    <span>TIME HELD</span><strong id="held-number">0</strong>
+                </div>
+                <div id="held-segments" aria-hidden="true"></div>
+                <small id="held-unit"></small>
+            </div>
+        </footer>
+        <aside id="context-hint" hidden role="status">
+            <p id="context-text"></p>
+            <button id="context-close" aria-label="Dismiss hint">×</button>
+        </aside>
+        <div id="announcement" class="sr-only" aria-live="polite"></div>
+        <noscript
+            ><p id="fallback">
+                Enable JavaScript to play. A desktop keyboard is required.
+            </p></noscript
+        >
+        <script defer src="vendor/svg.min.js"></script>
+        <script defer src="js/npc-svg.js"></script>
+        <script defer src="js/config.js"></script>
+        <script defer src="js/math.js"></script>
+        <script defer src="js/characters.js"></script>
+        <script defer src="js/input.js"></script>
+        <script defer src="js/player.js"></script>
+        <script defer src="js/world.js"></script>
+        <script defer src="js/encounters.js"></script>
+        <script defer src="js/hints.js"></script>
+        <script defer src="js/family.js"></script>
+        <script defer src="js/recurrence.js"></script>
+        <script defer src="js/endings.js"></script>
+        <script defer src="js/six-seven.js"></script>
+        <script defer src="js/rendering.js"></script>
+        <script defer src="js/opening.js"></script>
+        <script defer src="js/developer.js"></script>
+        <script defer src="js/game.js"></script>
+        <script defer src="js/interface.js"></script>
+        <script defer src="js/controls.js"></script>
+        <script defer src="js/game-view.js"></script>
+        <script defer src="js/environment.js"></script>
+        <script defer src="js/identity.js"></script>
+        <script defer src="js/economy.js"></script>
+        <script defer src="js/narrative.js"></script>
+        <script defer src="js/social-events.js"></script>
+        <script defer src="js/social-clock.js"></script>
+        <script defer src="js/information-panel.js"></script>
+        <script defer src="js/following.js"></script>
+        <script defer src="js/social-graph.js"></script>
+        <script defer src="js/world-events.js"></script>
+        <script defer src="script.js"></script>
+    </body>
+</html>

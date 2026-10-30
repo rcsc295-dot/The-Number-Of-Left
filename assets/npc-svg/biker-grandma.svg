@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 224 136">
+  <!-- Generator: Adobe Illustrator 30.8.2, SVG Export Plug-In . SVG Version: 2.1.4 Build 7)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke-width: 2px;
+      }
+
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11, .st12, .st13, .st14, .st15 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .st0, .st2, .st6, .st7, .st8, .st10 {
+        stroke: #233e35;
+      }
+
+      .st0, .st16 {
+        fill: #bcc5b6;
+      }
+
+      .st1, .st2, .st3, .st4, .st5, .st10, .st15 {
+        stroke-width: 3.2px;
+      }
+
+      .st1, .st3, .st11 {
+        fill: #eee9da;
+      }
+
+      .st1, .st5, .st9 {
+        stroke: #87917b;
+      }
+
+      .st17, .st2, .st4 {
+        fill: #315247;
+      }
+
+      .st3, .st4, .st13, .st14, .st15 {
+        stroke: #bcc5b6;
+      }
+
+      .st5, .st6, .st7, .st8, .st9, .st12, .st13, .st14, .st15 {
+        fill: none;
+      }
+
+      .st6 {
+        stroke-width: 4.8px;
+      }
+
+      .st7, .st14 {
+        stroke-width: 6px;
+      }
+
+      .st8 {
+        stroke-width: 9.6px;
+      }
+
+      .st9 {
+        stroke-width: 7.2px;
+      }
+
+      .st10 {
+        fill: #a56352;
+      }
+
+      .st11 {
+        stroke-width: 2.8px;
+      }
+
+      .st11, .st12 {
+        stroke: #315247;
+      }
+
+      .st12 {
+        stroke-width: 10px;
+      }
+
+      .st18 {
+        fill: #233e35;
+      }
+
+      .st13 {
+        stroke-width: 8px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1" data-asset="biker-grandma">
+    <g id="RearWheel">
+      <circle class="st18" cx="44" cy="112" r="20"/>
+      <circle class="st3" cx="44" cy="112" r="13.2"/>
+      <line class="st5" x1="32" y1="112" x2="56" y2="112"/>
+      <line class="st5" x1="44" y1="100" x2="44" y2="124"/>
+      <circle class="st17" cx="44" cy="112" r="4"/>
+    </g>
+    <g id="FrontWheel">
+      <circle class="st18" cx="180" cy="112" r="20"/>
+      <circle class="st3" cx="180" cy="112" r="13.2"/>
+      <line class="st5" x1="168" y1="112" x2="192" y2="112"/>
+      <line class="st5" x1="180" y1="100" x2="180" y2="124"/>
+      <circle class="st17" cx="180" cy="112" r="4"/>
+    </g>
+    <path id="Frame" class="st7" d="M44,112l28-36,52,8,16,28H44Z"/>
+    <path id="Fenders" class="st9" d="M20,100c16-16,32-16,48,0M160,96c16-8,29.33-6.67,40,4"/>
+    <path id="FrontFork" class="st14" d="M152,60l12,20,16,32M164,76l24,36"/>
+    <path id="Exhaust" class="st13" d="M32,124h92l16-8"/>
+    <g id="Engine">
+      <path class="st4" d="M88,92h32l12,20-36,4-8-24Z"/>
+      <line class="st15" x1="96" y1="98" x2="120" y2="98"/>
+      <line class="st15" x1="96" y1="106" x2="120" y2="106"/>
+    </g>
+    <path id="FuelTank" class="st10" d="M84,76c18.67-10.67,37.33-9.33,56,4l-12,12-36-4-8-12Z"/>
+    <path id="Saddle" class="st18" d="M52,72h32l16,8h-36l-12-8Z"/>
+    <path id="RiderLegs" class="st8" d="M88,68l24,20-8,20h20"/>
+    <path id="Jacket" class="st2" d="M76,36h24l20,28-28,12-20-12,4-28Z"/>
+    <path id="RiderArm" class="st12" d="M100,44l24,16,24-4"/>
+    <path id="Handlebars" class="st6" d="M144,56h16l4,16"/>
+    <circle id="Glove" class="st18" cx="148" cy="56" r="4"/>
+    <path id="SilverHair" class="st16" d="M84,24c-13.33,0-20,4-20,12,5.33,2.67,10.67,1.33,16-4"/>
+    <circle id="RiderHead" class="st11" cx="88" cy="24" r="12.8"/>
+    <path id="Helmet" class="st17" d="M72,24c0-13.33,5.33-20,16-20s16,6.67,16,20l-12,4-20-4Z"/>
+    <path id="Visor" class="st0" d="M92,20h14l-2,8h-12v-8Z"/>
+    <circle id="Headlight" class="st1" cx="164" cy="76" r="4.6"/>
+  </g>
+</svg>

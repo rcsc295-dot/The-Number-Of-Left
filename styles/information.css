@@ -1,0 +1,219 @@
+/* One quiet central display; narrative choices replace ordinary status. */
+#information-panel {
+    position: fixed;
+    --tv-top: clamp(88px, 10vh, 110px);
+    top: var(--tv-top);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(480px, 47vw);
+    padding: 7px;
+    border: 5px solid #737a76;
+    border-radius: 13px;
+    background: #b7bdb7;
+    box-shadow:
+        inset 0 2px 0 #e1e4df,
+        0 3px 0 #48564c;
+    color: var(--ink);
+    z-index: 3;
+}
+#tv-screen {
+    height: clamp(190px, 23.6vh, 232px);
+    max-height: calc(var(--world-top, 45vh) - var(--tv-top) - 56px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    padding: 11px 14px;
+    border: 2px solid #525e56;
+    border-radius: 7px;
+    background: #d4d8cf;
+    box-shadow: inset 0 2px 6px #35443a26;
+}
+.tv-antenna {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    width: 52px;
+    height: 25px;
+    transform: translateX(-50%);
+}
+.tv-antenna i {
+    position: absolute;
+    bottom: 0;
+    left: 24px;
+    width: 4px;
+    height: 22px;
+    border-radius: 3px;
+    background: #6d7770;
+    transform-origin: bottom;
+    transform: rotate(-38deg);
+}
+.tv-antenna i + i {
+    transform: rotate(38deg);
+}
+.tv-stand {
+    position: absolute;
+    top: calc(100% + 7px);
+    left: calc(50% - 4px);
+    width: 8px;
+    height: 20px;
+    background: #747d75;
+}
+.tv-stand::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: -22px;
+    width: 52px;
+    height: 5px;
+    background: #747d75;
+    border-radius: 50%;
+}
+#information-panel[data-mode='scoreboard'] #tv-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    scrollbar-gutter: auto;
+    container-type: size;
+}
+#six-seven-scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.16em;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    font:
+        400 clamp(48px, 8vw, 112px)/1 Georgia,
+        serif;
+    font-size: min(34cqw, 86cqh);
+    white-space: nowrap;
+}
+#environment-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 16px;
+    font-size: 10px;
+}
+#environment-actions button {
+    border-bottom: 1px solid #63736670;
+    padding: 3px 0;
+}
+#developer-controls {
+    border-top: 1px solid var(--line);
+    margin-top: 8px;
+}
+
+.information-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--soft);
+}
+#information-panel h2 {
+    font:
+        400 clamp(20px, 1.6vw, 23px)/1.2 Georgia,
+        serif;
+    margin: 9px 0 7px;
+}
+#information-text {
+    margin: 0;
+    font:
+        13px/1.6 Arial,
+        sans-serif;
+    max-width: 65ch;
+    min-height: 0;
+    overflow: auto;
+}
+.information-meta,
+#information-panel h2,
+#information-actions {
+    flex-shrink: 0;
+}
+#information-panel[data-mode='scoreboard'] #information-text {
+    font-size: 11px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+#information-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+#information-actions:empty {
+    display: none;
+}
+#information-actions button {
+    border: 1px solid #31524760;
+    padding: 9px 12px;
+    background: #eee9da;
+    font-size: 11px;
+}
+#information-actions button:hover {
+    background: #d9dfcd;
+}
+#information-panel[data-mode='decision'] {
+    border-color: #3152479c;
+}
+#relationship-rows td:first-child {
+    min-width: 130px;
+}
+@media (max-width: 800px) {
+    #information-panel {
+        width: min(480px, calc(100vw - 36px));
+        --tv-top: 96px;
+        padding: 7px;
+        border-width: 5px;
+    }
+    #tv-screen {
+        height: clamp(200px, 25vh, 240px);
+        padding: 12px 14px;
+    }
+    .information-meta {
+        font-size: 8px;
+    }
+    #information-text {
+        font-size: 12px;
+    }
+    #information-panel h2 {
+        margin: 9px 0;
+        font-size: 22px;
+    }
+}
+@media (max-height: 600px) {
+    #information-panel {
+        --tv-top: 72px;
+        padding: 5px;
+        border-width: 4px;
+    }
+    #tv-screen {
+        height: 200px;
+        padding: 8px 13px;
+    }
+    .tv-antenna {
+        top: -22px;
+    }
+    .tv-antenna i {
+        height: 20px;
+    }
+    .tv-stand {
+        height: 10px;
+        top: calc(100% + 4px);
+    }
+    #information-panel h2 {
+        font-size: 18px;
+        margin: 6px 0;
+    }
+}
+
+/* Leave a readable line below live numerals when a short gameplay hint is present. */
+#information-panel[data-mode='scoreboard']:has(#information-text:not([hidden]))
+    #six-seven-scoreboard {
+    font-size: min(34cqw, 58cqh);
+}

@@ -1,0 +1,210 @@
+/* HELD METER / CONTEXTUAL HINTS */
+#held-meter {
+    width: 218px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+.held-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+#held-number {
+    font:
+        24px Georgia,
+        serif;
+    letter-spacing: 0;
+}
+#held-segments {
+    display: flex;
+    gap: 4px;
+    margin-top: 10px;
+}
+#held-segments i {
+    flex: 1;
+    height: 6px;
+    border: 1px solid #31524770;
+    background: linear-gradient(
+        to right,
+        var(--green) var(--fill, 0%),
+        transparent var(--fill, 0%)
+    );
+}
+#held-unit {
+    display: block;
+    margin-top: 6px;
+    min-height: 10px;
+    font-size: 8px;
+    text-transform: none;
+    letter-spacing: 0.04em;
+}
+#context-hint {
+    position: fixed;
+    left: 38px;
+    bottom: 28px;
+    z-index: 4;
+    width: min(360px, calc(100vw - 44px));
+    padding: 17px 38px 17px 18px;
+    background: #f1eddf;
+    border: 1px solid #31524745;
+    box-shadow: 0 6px 24px #233e3510;
+}
+#context-text {
+    margin: 0;
+    font:
+        13px/1.65 Arial,
+        Helvetica,
+        sans-serif;
+}
+#context-close {
+    position: absolute;
+    top: 7px;
+    right: 9px;
+    padding: 5px;
+    color: var(--soft);
+}
+body:has(#context-hint:not([hidden])) #footer-note {
+    visibility: hidden;
+}
+@media (max-width: 900px) {
+    header {
+        padding: 22px 133px 22px 22px;
+    }
+    .tools {
+        gap: 12px;
+    }
+    .tools button {
+        font-size: 9px;
+    }
+    #control {
+        right: 20px;
+        top: 23px;
+    }
+    .wordmark {
+        font-size: 16px;
+    }
+    footer {
+        left: 22px;
+        right: 22px;
+    }
+    #context-hint {
+        left: 22px;
+    }
+}
+@media (max-width: 650px) {
+    .wordmark {
+        display: none;
+    }
+    .tools {
+        gap: 10px;
+    }
+    .panel {
+        inset: 85px 15px 15px;
+        width: calc(100vw - 30px);
+    }
+    #hint {
+        bottom: 100px;
+    }
+    #held-meter {
+        width: 165px;
+    }
+    #context-hint {
+        bottom: 100px;
+    }
+    .ending-time h1 {
+        font-size: 20px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+/* VERSION 2.0 — guidance and the numeral ending keep the same paper and ink. */
+#nearby-controls {
+    position: fixed;
+    transform: translateX(-50%);
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    gap: 15px;
+    padding: 6px 9px;
+    background: #eee9daeb;
+    border: 1px solid #31524730;
+    border-radius: 3px;
+    color: var(--ink);
+    font-size: 11px;
+    white-space: nowrap;
+}
+#nearby-controls .unavailable {
+    color: var(--soft);
+}
+.instruction-keys strong {
+    font-size: clamp(17px, 2.4vw, 24px);
+}
+.ending-six-seven #end-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+.ending-six-seven #end-caption,
+.ending-six-seven .rule {
+    display: none;
+}
+@media (max-width: 650px) {
+    .instruction-keys {
+        gap: 8px;
+    }
+    #nearby-controls {
+        font-size: 10px;
+        gap: 10px;
+    }
+}
+/* SHORT EVENTS — one warning, one skippable demonstration, no confirmation dialog. */
+#demo-controls {
+    position: fixed;
+    bottom: 7vh;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 4;
+    pointer-events: none;
+}
+#demo-skip {
+    pointer-events: auto;
+    padding: 12px 18px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+}
+#family-warning {
+    position: fixed;
+    top: 43%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(780px, 90vw);
+    padding: 24px 28px;
+    text-align: center;
+    color: var(--ink);
+    background: #eee9dae8;
+    z-index: 4;
+    pointer-events: none;
+}
+#family-warning p {
+    margin: 0;
+    font:
+        400 clamp(27px, 4.2vw, 49px)/1.2 Georgia,
+        serif;
+}
+#family-warning p + p {
+    margin-top: 17px;
+    font:
+        italic clamp(19px, 2.4vw, 27px)/1.4 Georgia,
+        serif;
+}
+button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}

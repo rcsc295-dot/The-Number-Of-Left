@@ -1,0 +1,485 @@
+/* PAPER / INK — local CSS only; no images, fonts, or libraries to download. */
+:root {
+    color-scheme: light;
+    --paper: #eee9da;
+    --ink: #233e35;
+    --green: #315247;
+    --soft: #637366;
+    --line: #233e352b;
+}
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font:
+        14px Arial,
+        Helvetica,
+        sans-serif;
+}
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.1;
+    background-image:
+        radial-gradient(#233e3550 0.5px, transparent 0.8px),
+        radial-gradient(#fff8 0.6px, transparent 0.9px);
+    background-size:
+        5px 7px,
+        11px 13px;
+    background-position:
+        0 0,
+        3px 4px;
+}
+[hidden] {
+    display: none !important;
+}
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+button {
+    font: inherit;
+    cursor: pointer;
+    color: inherit;
+    background: none;
+    border: 0;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 5px;
+}
+button:hover {
+    color: var(--green);
+}
+a {
+    color: inherit;
+    text-underline-offset: 4px;
+}
+#stage {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+}
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 27px 155px 27px 38px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    z-index: 30;
+}
+.wordmark {
+    font:
+        20px Georgia,
+        serif;
+    letter-spacing: -0.04em;
+}
+.tools {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    pointer-events: auto;
+}
+.tools button,
+.small-button {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 10px;
+    padding: 10px 0;
+    color: var(--soft);
+}
+.tools button:hover,
+.small-button:hover {
+    color: var(--ink);
+}
+.tools .icon-button {
+    display: grid;
+    place-items: center;
+    border: 1px solid #31524770;
+    border-radius: 50%;
+    width: 33px;
+    height: 33px;
+    padding: 0;
+    font-size: 15px;
+    letter-spacing: 0;
+    color: var(--ink);
+}
+.tools .icon-button:hover {
+    background: #31524710;
+}
+footer {
+    position: fixed;
+    bottom: 28px;
+    left: 38px;
+    right: 38px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 2;
+    color: var(--soft);
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+#hint {
+    position: fixed;
+    left: 50%;
+    bottom: 80px;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+    letter-spacing: 0.15em;
+    font-size: 11px;
+    line-height: 2;
+    white-space: pre-line;
+    color: var(--ink);
+    z-index: 2;
+}
+.overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 3;
+}
+#title-screen,
+#end-screen {
+    pointer-events: none;
+}
+.title-card {
+    pointer-events: auto;
+    width: min(760px, 90vw);
+}
+.eyebrow {
+    color: var(--soft);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin: 0 0 25px;
+}
+h1,
+h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+}
+h1 {
+    font-size: clamp(36px, 4.2vw, 56px);
+    line-height: 1.3;
+    margin: 0;
+}
+h2 {
+    font-size: 36px;
+    letter-spacing: -0.035em;
+    margin: 0 0 30px;
+}
+.rule {
+    width: 32px;
+    height: 1px;
+    margin: 30px auto;
+    background: var(--green);
+    opacity: 0.45;
+}
+.primary {
+    padding: 15px 28px;
+    min-width: 145px;
+    border: 1px solid #31524780;
+    font-size: 11px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    transition: background 0.2s;
+}
+.primary:hover {
+    background: var(--green);
+    color: var(--paper);
+}
+.title-card .small-button {
+    display: block;
+    margin: 20px auto 0;
+}
+#title-screen h1 {
+    font:
+        400 clamp(25px, 4.7vw, 58px)/1.2 Arial,
+        Helvetica,
+        sans-serif;
+    letter-spacing: 0.12em;
+    margin: 0 0 48px;
+}
+#title-screen .primary {
+    min-width: 180px;
+    padding: 19px 35px;
+    font-size: 16px;
+    letter-spacing: 0.22em;
+}
+.playing-time {
+    margin: 23px 0 38px;
+    color: var(--soft);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+}
+#title-screen .small-button {
+    margin: 0;
+}
+.menu-actions {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin-top: 25px;
+}
+#quote-screen {
+    z-index: 4;
+    cursor: pointer;
+}
+.quote-card {
+    width: min(760px, 85vw);
+}
+.quote-card blockquote {
+    font:
+        400 clamp(23px, 3.2vw, 37px)/1.55 Georgia,
+        serif;
+    margin: 0 0 36px;
+}
+#quote-author {
+    margin: 0 0 10px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+}
+#quote-source {
+    color: var(--soft);
+    font:
+        italic 13px Georgia,
+        serif;
+}
+#quote-skip {
+    margin-top: 32px;
+    color: var(--soft);
+    font-size: 9px;
+}
+#pause-screen {
+    background: #eee9daeb;
+    backdrop-filter: blur(5px);
+    z-index: 5;
+}
+.ending-family #end-caption,
+.ending-family .rule {
+    display: none;
+}
+.ending-family #end-title {
+    font-size: calc(42px * var(--world-scale, 1));
+    line-height: 1.45;
+}
+.ending-time .title-card {
+    position: absolute;
+    top: 12vh;
+    width: 95%;
+}
+.ending-time h1 {
+    font:
+        400 clamp(20px, 2.8vw, 36px)/1.3 Arial,
+        Helvetica,
+        sans-serif;
+    letter-spacing: 0.1em;
+}
+.ending-time .rule {
+    display: none;
+}
+#debug {
+    position: fixed;
+    left: 15px;
+    top: 80px;
+    max-height: 70vh;
+    overflow: auto;
+    background: #eee9daf0;
+    color: var(--ink);
+    padding: 14px;
+    font: 11px/1.5 monospace;
+    z-index: 8;
+    white-space: pre;
+    pointer-events: none;
+}
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+#fallback {
+    position: fixed;
+    bottom: 10px;
+    padding: 20px;
+    background: var(--paper);
+}
+
+/* Dedicated achievement menu; CSS symbols use no downloaded artwork. */
+#achievements-screen {
+    overflow: auto;
+    background: var(--paper);
+}
+.achievements-card {
+    width: min(760px, 92vw);
+    max-height: 100%;
+    padding: 35px 0;
+}
+#achievements-title {
+    font:
+        24px Arial,
+        sans-serif;
+    letter-spacing: 0.18em;
+}
+.achievement-totals {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+}
+#achievement-list {
+    list-style: none;
+    margin: 20px 0 32px;
+    padding: 0;
+    text-align: left;
+}
+#achievement-list li {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid var(--line);
+    margin: 12px 0;
+    padding: 20px;
+}
+#achievement-list h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    font-weight: normal;
+}
+#achievement-list p {
+    margin: 0;
+    color: var(--soft);
+    font:
+        italic 14px/1.5 Georgia,
+        serif;
+}
+.achievement-status {
+    color: var(--soft);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+}
+#achievement-list [data-unlocked='true'] {
+    border-color: #31524770;
+    background: #31524706;
+}
+.achievement-icon {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: block;
+    opacity: 0.65;
+}
+.achievement-icon.letters {
+    border: 1px solid;
+    height: 21px;
+}
+.achievement-icon.letters::after {
+    content: '';
+    position: absolute;
+    inset: 2px 6px 7px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    transform: rotate(45deg);
+}
+.achievement-icon.pair::before,
+.achievement-icon.pair::after {
+    content: '';
+    position: absolute;
+    width: 13px;
+    height: 19px;
+    border: 1px solid;
+    top: 4px;
+}
+.achievement-icon.pair::after {
+    left: 17px;
+    top: 1px;
+}
+.achievement-icon.universe {
+    border: 1px solid;
+    border-radius: 50%;
+}
+.achievement-icon.universe::after {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    border: 1px solid;
+    border-radius: 50%;
+}
+#achievement-storage {
+    color: var(--soft);
+    font-size: 12px;
+}
+#title-screen {
+    overflow: auto;
+}
+#title-screen .title-card {
+    max-height: 100%;
+    padding-block: 24px;
+}
+@media (max-width: 520px) {
+    #achievement-list li {
+        gap: 12px;
+        padding: 16px 12px;
+    }
+    .achievement-status {
+        grid-column: 2 / 4;
+    }
+    .achievement-totals {
+        flex-wrap: wrap;
+        gap: 0;
+    }
+}
+
+/* Keep the world below the television in short windows; scroll the scene as one page. */
+@media (max-height: 699px) {
+    html {
+        overflow-y: auto;
+    }
+    body {
+        position: relative;
+        height: 700px;
+        overflow: visible;
+    }
+    #stage {
+        position: absolute;
+        height: 700px;
+    }
+    #game-header,
+    #control,
+    #information-panel,
+    #game-footer {
+        position: absolute;
+    }
+}

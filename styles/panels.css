@@ -1,0 +1,264 @@
+/* Existing developer remote and live panels. */
+#control {
+    position: fixed;
+    z-index: 50;
+    right: 28px;
+    top: 28px;
+    border: 1px solid #31524770;
+    border-radius: 5px;
+    padding: 10px 13px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 10px;
+    letter-spacing: 0.13em;
+}
+#control[aria-expanded='true'] {
+    background: var(--green);
+    color: var(--paper);
+}
+.panel {
+    position: fixed;
+    z-index: 40;
+    inset: 85px 25px 25px auto;
+    width: min(430px, calc(100vw - 50px));
+    background: #f1eddf;
+    border: 1px solid var(--line);
+    box-shadow: 0 15px 55px #233e351c;
+    padding: 24px;
+    overflow: auto;
+    text-align: left;
+}
+.panel.wide {
+    width: min(600px, calc(100vw - 50px));
+}
+.panel h2 {
+    font-size: 29px;
+    margin: 8px 0 22px;
+}
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 20px;
+}
+.panel-head button {
+    padding: 6px;
+    font-size: 11px;
+    color: var(--soft);
+}
+.panel .eyebrow {
+    margin-bottom: 8px;
+    font-size: 9px;
+}
+.panel p {
+    font-size: 13px;
+    line-height: 1.7;
+}
+.panel details {
+    border-top: 1px solid var(--line);
+    padding: 13px 0;
+}
+.panel summary {
+    cursor: pointer;
+    color: var(--green);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 0;
+}
+.control-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    padding-top: 12px;
+}
+.control-grid button {
+    padding: 10px 8px;
+    border: 1px solid var(--line);
+    background: #f4f2dc05;
+    font-size: 11px;
+    line-height: 1.3;
+    text-align: left;
+    border-radius: 3px;
+}
+.control-grid button:hover {
+    background: #f4f2dc13;
+}
+#control-panel {
+    --ink: #f1eddf;
+    --green: #e2e6d3;
+    --soft: #c3ceb9;
+    --line: #ffffff25;
+    background: #315247;
+    color: var(--ink);
+}
+#selected-person,
+.control-inputs input {
+    background: #f1eddf0a;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px;
+    width: 100%;
+    font-size: 12px;
+}
+#selected-person option {
+    color: #233e35;
+    background: #f1eddf;
+}
+.control-inputs {
+    display: flex;
+    gap: 12px;
+    padding-top: 12px;
+}
+.control-inputs label {
+    flex: 1;
+    min-width: 0;
+    font-size: 11px;
+    color: var(--soft);
+}
+.control-inputs input {
+    display: block;
+    margin-top: 7px;
+}
+#selected-info {
+    font: 11px/1.7 monospace;
+    white-space: pre-line;
+}
+#control-status {
+    position: sticky;
+    bottom: -24px;
+    margin: 0 -24px -24px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--line);
+    background: #2b483d;
+    font: 11px/1.6 Arial;
+}
+#control-world {
+    font-size: 10px;
+    color: var(--soft);
+}
+.table-wrap {
+    overflow: auto;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    line-height: 1.6;
+}
+th {
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--soft);
+    font-weight: 400;
+    padding: 10px 8px;
+}
+td {
+    padding: 14px 8px;
+    border-top: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+}
+td:nth-child(2),
+td small {
+    font-size: 10px;
+}
+td small {
+    display: block;
+    color: var(--soft);
+}
+.instruction-keys {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    border-block: 1px solid var(--line);
+    padding: 18px 0;
+    margin-bottom: 20px;
+}
+.instruction-keys strong {
+    display: block;
+    font:
+        24px Georgia,
+        serif;
+    margin-top: 10px;
+}
+.instruction-keys span {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+}
+.rules p {
+    margin: 10px 0;
+}
+body:has(#title-screen:not([hidden])) #instructions-panel,
+body:has(#title-screen:not([hidden])) #credits-panel {
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    max-height: calc(100vh - 50px);
+}
+body:has(#instructions-panel:not([hidden]), #credits-panel:not([hidden]))
+    #title-screen
+    .title-card {
+    opacity: 0.15;
+}
+
+/* Recovered direct testing controls in a compact, bounded remote. */
+#control-panel {
+    inset: 82px 16px auto auto;
+    width: min(280px, calc(100vw - 32px));
+    max-height: min(460px, calc(100dvh - 100px));
+    padding: 12px;
+    overscroll-behavior: contain;
+}
+#control-panel h2 {
+    font-size: 20px;
+    margin: 2px 0 8px;
+}
+#control-panel details {
+    padding: 4px 0;
+}
+#control-panel .control-grid {
+    gap: 6px;
+    padding-top: 8px;
+}
+#control-panel .control-grid button {
+    padding: 6px;
+}
+#control-panel #selected-person,
+#control-panel .control-inputs input {
+    padding: 7px;
+}
+
+#control-panel #selected-info {
+    margin: 8px 0;
+}
+#control-panel #control-status {
+    bottom: -12px;
+    margin: 0 -12px -12px;
+    padding: 8px 12px;
+}
+
+.control-endings h3 {
+    font:
+        400 11px Arial,
+        sans-serif;
+    letter-spacing: 0.12em;
+    margin: 10px 0 0;
+}
+.control-endings {
+    padding-bottom: 12px;
+}
+#control-panel .panel-head {
+    position: sticky;
+    top: -12px;
+    background: #315247;
+    z-index: 1;
+    padding-top: 12px;
+    margin-top: -12px;
+}
+#relationships-panel .panel-head {
+    position: sticky;
+    top: -24px;
+    background: #f1eddf;
+    z-index: 1;
+}
