@@ -134,6 +134,7 @@
         if (view)
             Object.assign(view, {
                 state: 'farewell',
+                waitingTarget: null,
                 moving: false,
                 farewellTime: -delay,
                 pauseLeft: Infinity

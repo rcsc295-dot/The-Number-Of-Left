@@ -424,11 +424,13 @@
             } else if (this.scene === 'end') {
                 this.input.clear();
                 const timing = this.c.ENDING_RETURN;
-                // Finish the visual fade, then retain this World until an explicit Restart / New Game.
+                // Hold the completed ending, then reuse the existing fresh-world transition.
                 this.endingReturnElapsed = Math.min(
                     this.endingReturnElapsed + dt,
                     timing.HOLD_SECONDS + timing.FADE_SECONDS
                 );
+                if (this.endingReturnElapsed >= timing.HOLD_SECONDS + timing.FADE_SECONDS)
+                    this.returnDirectlyToGameplay();
             }
             this.input.endFrame();
         }

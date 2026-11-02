@@ -13,6 +13,8 @@
     function renewFollowing(world, data, reason = 'gift') {
         if (
             data.kind !== 'person' ||
+            NL.isBloodRelative(data) ||
+            data.briefEncounter ||
             data.lifeStatus !== 'present' ||
             data.permanentlyGone
         )
@@ -40,7 +42,30 @@
         );
         return true;
     }
+    function startFamilyWaiting(world, data) {
+        const view = world.views.get(data.id);
+        if (
+            !NL.isBloodRelative(data) ||
+            data.giftedEncounters < world.c.FRIEND_GIFT_THRESHOLD ||
+            !data.active || data.lifeStatus !== 'present' ||
+            !view || view.state !== 'present'
+        ) return;
+        if (view.waitingTarget) return;
+        stopFollowing(data);
+        world.randomTarget(view);
+        view.waitingTarget = { x: view.tx, y: view.ty };
+        data.behaviour = 'waiting';
+        // Leave time to reach the place before the ordinary visit timer can end this visit.
+        view.visitLeft = Math.max(
+            view.visitLeft,
+            NL.distance(view, view.waitingTarget) / view.speed + 12
+        );
+    }
     function followingGift(world, data) {
+        if (NL.isBloodRelative(data)) {
+            startFamilyWaiting(world, data);
+            return;
+        }
         if (
             data.kind === 'person' &&
             data.giftedEncounters > 0 &&
@@ -61,7 +86,10 @@
     function updateFollower(world, view, dt) {
         const data = view.data,
             follow = data.follow;
-        if (!follow || follow.remaining <= 0 || data.lifeStatus !== 'present')
+        if (
+            NL.isBloodRelative(data) || !follow ||
+            follow.remaining <= 0 || data.lifeStatus !== 'present'
+        )
             return false;
         follow.remaining = Math.max(0, follow.remaining - dt);
         if (!follow.remaining) {
@@ -110,6 +138,7 @@
     }
     Object.assign(NL, {
         stopFollowing,
+        startFamilyWaiting,
         renewFollowing,
         followingGift,
         currentFollowers,

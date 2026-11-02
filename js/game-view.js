@@ -127,7 +127,7 @@
                 ctx.fillRect(0, 0, c.WIDTH, c.HEIGHT);
             }
             const endingFade = this.scene === 'end' ? this.endingFade() : 0;
-            this.ui['end-screen'].style.opacity = 1;
+            this.ui['end-screen'].style.opacity = 1 - endingFade;
             if (endingFade > 0) {
                 ctx.save();
                 ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);

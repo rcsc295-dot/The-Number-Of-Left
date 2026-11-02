@@ -7,11 +7,14 @@
             this.world = world;
             this.nextSpawn = NL.range(world.rng, world.c.RETURN.SPAWN_INTERVAL);
             this.candidates = [];
+            this.nextBriefAt = world.c.BRIEF_ENCOUNTERS.FIRST_AT;
             this.nextBloodRelativeAt =
                 world.c.FIRST_BLOOD_RELATIVE_DELAY / 1000;
         }
 
         introductionDue(d) {
+            if (d.briefEncounter)
+                return this.world.time >= this.nextBriefAt;
             if (d.visits > 0) return true;
             return (
                 (!d.template && !NL.isBloodRelative(d)) ||
@@ -53,7 +56,7 @@
             ) {
                 return false;
             }
-            const interior = initial || !!d.template;
+            const interior = initial || !!d.template || !!d.briefEncounter;
             const position = d.template
                 ? NL.getSafeSpawnPosition(w)
                 : NL.openWorldPosition(w, c.PERSONAL_SPACE + 4);
@@ -81,10 +84,14 @@
             w.views.set(d.id, v);
             w.randomTarget(v);
             onStoryArrival(w, v);
+            NL.startFamilyWaiting(w, d);
+            if (d.briefEncounter) this.nextBriefAt = w.time + c.BRIEF_ENCOUNTERS.INTERVAL;
             return true;
         }
 
         depart(v) {
+            v.waitingTarget = null;
+            NL.stopFollowing(v.data);
             v.state = 'leaving';
             v.tx =
                 v.x < this.world.c.WIDTH / 2
@@ -164,6 +171,7 @@
                         (v) =>
                             v.state === 'present' &&
                             !v.data.template &&
+                            !v.data.briefEncounter &&
                             v.data.follow.remaining <= 0 &&
                             v.pauseLeft <= 0
                     )
@@ -195,6 +203,11 @@
                 .sort((a, b) => a.nextReturnAt - b.nextReturnAt)[0];
             if (family) {
                 this.arrive(family);
+                return;
+            }
+            const brief = this.candidates.find((d) => d.briefEncounter);
+            if (brief) {
+                this.arrive(brief);
                 return;
             }
             let ticket = w.rng() * total;

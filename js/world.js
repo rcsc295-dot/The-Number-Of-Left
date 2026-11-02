@@ -10,7 +10,7 @@
             this.bounds = NL.worldBounds(c);
             this.population = NL.createPopulation(rng, c);
             const initialPeople = this.population
-                .filter((d) => !d.template)
+                .filter((d) => !d.template && !d.briefEncounter)
                 .slice(0, Math.min(c.INITIAL_VISIBLE, c.NPC_COUNT));
             // Set starting values before the economy creates their opportunity tokens.
             for (const d of initialPeople)
@@ -164,7 +164,9 @@
                 v.opacity =
                     1 -
                     NL.clamp(
-                        (v.finalElapsed - c.FINAL_HOLD) / c.FINAL_FADE,
+                        (v.finalElapsed - (d.briefEncounter
+                            ? c.BRIEF_ENCOUNTERS.FINAL_HOLD
+                            : c.FINAL_HOLD)) / c.FINAL_FADE,
                         0,
                         1
                     );
@@ -184,7 +186,7 @@
             v.pauseLeft = Math.max(0, v.pauseLeft - dt);
             if (v.state === 'present' && NL.updateFollower(this, v, dt)) return;
             if (v.state === 'present') {
-                v.visitLeft -= dt;
+                if (!d.briefEncounter) v.visitLeft -= dt;
                 if (v.visitLeft <= 0 && v.pauseLeft <= 0) {
                     this.recurrence.depart(v);
                 }
@@ -194,23 +196,29 @@
             }
             v.sitting = false;
             if (v.state === 'present') {
-                v.turnIn -= dt;
-                if (v.turnIn <= 0 || Math.hypot(v.tx - v.x, v.ty - v.y) < 7) {
-                    this.randomTarget(v);
-                    if (
-                        v.visual.movementStyle === 'rest' &&
-                        this.rng() < c.SPECIAL.IDLE_CHANCE
-                    ) {
-                        v.pauseLeft = NL.range(
-                            this.rng,
-                            c.SPECIAL.IDLE_SECONDS
-                        );
-                        v.sitting = true;
-                        return;
+                if (v.waitingTarget) {
+                    v.tx = v.waitingTarget.x;
+                    v.ty = v.waitingTarget.y;
+                    if (Math.hypot(v.tx - v.x, v.ty - v.y) <= 1) return;
+                } else {
+                    v.turnIn -= dt;
+                    if (v.turnIn <= 0 || Math.hypot(v.tx - v.x, v.ty - v.y) < 7) {
+                        this.randomTarget(v);
+                        if (
+                            v.visual.movementStyle === 'rest' &&
+                            this.rng() < c.SPECIAL.IDLE_CHANCE
+                        ) {
+                            v.pauseLeft = NL.range(
+                                this.rng,
+                                c.SPECIAL.IDLE_SECONDS
+                            );
+                            v.sitting = true;
+                            return;
+                        }
                     }
+                    applyCharacterBehaviour(this, v);
+                    NL.updateStoryMotion(this, v, dt);
                 }
-                applyCharacterBehaviour(this, v);
-                NL.updateStoryMotion(this, v, dt);
             }
             let speed = v.speed;
             if (v.visual.movementStyle === 'slow') {

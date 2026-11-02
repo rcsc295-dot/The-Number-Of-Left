@@ -12,6 +12,7 @@
             !NL.narrativeBlocking(world) &&
             !world.sixSevenProgress.pending &&
             !!character &&
+            !character.data.briefEncounter &&
             (action !== 'take' ||
                 (canTakeFrom(character.data) &&
                     character.data.encountersLeft !== 8)) &&
@@ -107,6 +108,15 @@
             world.c.RETURN.MAX_WEIGHT,
             data.returnWeight + world.c.RETURN.MEETING_GAIN
         );
+        if (data.briefEncounter) {
+            const view = world.views.get(data.id);
+            view.previousNumber = 1;
+            view.feedback = world.c.FEEDBACK_SECONDS;
+            data.opportunities.length = 0;
+            retireCharacter(world, view);
+            NL.televisionHint(world, 'brief-encounter-' + data.id,
+                'Only once', 'Some people pass through your life only once.', 30);
+        }
         world.meetings++;
         world.tutorial.met = true;
         world.revision++;
@@ -114,13 +124,16 @@
     }
 
     function updateMeetings(world, dt) {
+        // A major story or committed ending must not consume this brief meeting off-screen.
+        const briefPaused = NL.narrativeBlocking(world) || world.sixSevenProgress.pending;
         const nearest = world.nearest();
         for (const character of world.views.values()) {
             if (character.data.kind !== 'person') {
                 continue;
             }
             character.meetingDwell =
-                character === nearest && character.state === 'present'
+                character === nearest && character.state === 'present' &&
+                !(character.data.briefEncounter && briefPaused)
                     ? character.meetingDwell + dt
                     : 0;
             if (character.meetingDwell >= world.c.MEETING_DWELL_SECONDS) {
@@ -134,6 +147,7 @@
         if (
             character &&
             !canTakeFrom(character.data) &&
+            !character.data.briefEncounter &&
             !world.endingTriggered &&
             !world.sixSevenProgress.pending &&
             !NL.narrativeBlocking(world) &&
@@ -218,7 +232,7 @@
                     world,
                     'family-care-' + data.id,
                     data.name,
-                    'Five meetings given back. You have made more time for someone who has already given you so much.',
+                    'They have found a place to wait for you.',
                     55
                 );
             } else NL.queueContextHint(world, 'friend');

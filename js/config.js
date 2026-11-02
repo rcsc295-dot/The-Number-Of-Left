@@ -41,6 +41,7 @@
         PERSONAL_SPACE: 30,
         INTERACTION_RADIUS: 46,
         MEETING_DWELL_SECONDS: 2,
+        BRIEF_ENCOUNTERS: { COUNT: 3, FIRST_AT: 35, INTERVAL: 75, FINAL_HOLD: 2.5 },
         TAKE_COOLDOWN: 0.65,
         GIVE_COOLDOWN: 0.4,
         FRIEND_GIFT_THRESHOLD: 5, // Protected relatives retain their existing care milestone.
@@ -77,12 +78,12 @@
             FAREWELL_SECONDS: 1.8,
             MILESTONE_STEP: 10
         },
-        SIX_SEVEN: { FADE_SECONDS: 1.2, GROW_SECONDS: 5, PREVIEW_SECONDS: 1.5 },
+        SIX_SEVEN: { FADE_SECONDS: 1.2, GROW_SECONDS: 3, PREVIEW_SECONDS: 1.5 },
         ENDING_RETURN: { HOLD_SECONDS: 3, FADE_SECONDS: 0.8 },
         DEMO_SECONDS: 5.25, // J/K demonstration only: 30% shorter than 7.5 seconds.
         FAMILY_WARNING: { FADE_IN: 0.15, HOLD: 2.3, FADE_OUT: 0.55 },
-        TIME_EMPTY_SECONDS: 4,
-        PLAYER_GROWTH_DURATION: 11,
+        TIME_EMPTY_SECONDS: 3,
+        PLAYER_GROWTH_DURATION: 7,
         PLAYER_GROWTH_SCALE: 16,
         CONTEXT_HINT_DURATION: 7,
         HELD_METER_SEGMENTS: 12,

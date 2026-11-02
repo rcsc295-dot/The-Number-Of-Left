@@ -114,6 +114,7 @@
             this.ui['game-footer'].hidden = !this.world;
             this.ui.control.hidden = !this.world;
             this.ui['end-screen'].hidden = this.scene !== 'end';
+            this.ui['restart-end'].parentElement.hidden = true;
             this.ui['pause-screen'].hidden = !this.paused || !!this.panel;
             for (const name of [
                 'control',
@@ -218,7 +219,7 @@
         updateHUD() {
             NL.renderInformationPanel(this);
             const w = this.world;
-            const nearby = this.playing && w.selected;
+            const nearby = this.playing && w.selected && !w.selected.data.briefEncounter;
             this.ui['nearby-controls'].hidden = !nearby;
             if (nearby) {
                 const x = this.offsetX + w.selected.x * this.scale;
