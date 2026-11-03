@@ -62,6 +62,16 @@
         'Reserved',
         'Impulsive'
     ];
+    const FAMILY_INTRODUCTIONS = {
+        Father: 'He may not always walk beside you, but he will always make time for you.',
+        Mother: 'She has been part of your world longer than you can remember.',
+        Grandpa:
+            'He carries more memories than the numbers above his head can tell.',
+        Grandma:
+            'Some people have a way of making every meeting feel familiar.',
+        'Biker Grandma':
+            'She has thousands of meetings left, and apparently no intention of slowing down.'
+    };
     function recordInteraction(world, data, type, details = {}) {
         const entry = { type, at: world.socialClock?.time || 0, ...details };
         data.history.push(entry);
@@ -74,6 +84,9 @@
             // A relative's role is their identity; never allocate a personal name.
             data.personalName = null;
             data.name = data.familyRole || 'Relative';
+            data.selfProfile =
+                FAMILY_INTRODUCTIONS[data.familyRole] ||
+                'They have been making time for you for longer than you can remember.';
             if (data.traits) return;
         } else {
             if (data.name) return;
@@ -133,7 +146,8 @@
         let profileSeed = 0;
         for (const character of data.id + data.name)
             profileSeed = (profileSeed * 31 + character.charCodeAt(0)) >>> 0;
-        data.selfProfile = `${data.name} ${beginnings[profileSeed % beginnings.length]} ${habits[data.traits[0]]}`;
+        if (!NL.isBloodRelative(data))
+            data.selfProfile = `${data.name} ${beginnings[profileSeed % beginnings.length]} ${habits[data.traits[0]]}`;
         Object.assign(data, {
             strength: 0,
             socialTies: {},

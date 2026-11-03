@@ -93,6 +93,7 @@
         const data = character;
         if (
             data.kind !== 'person' ||
+            data.briefEncounter ||
             data.permanentlyGone ||
             !data.active ||
             data.encountersLeft <= 0 ||
@@ -108,15 +109,6 @@
             world.c.RETURN.MAX_WEIGHT,
             data.returnWeight + world.c.RETURN.MEETING_GAIN
         );
-        if (data.briefEncounter) {
-            const view = world.views.get(data.id);
-            view.previousNumber = 1;
-            view.feedback = world.c.FEEDBACK_SECONDS;
-            data.opportunities.length = 0;
-            retireCharacter(world, view);
-            NL.televisionHint(world, 'brief-encounter-' + data.id,
-                'Only once', 'Some people pass through your life only once.', 30);
-        }
         world.meetings++;
         world.tutorial.met = true;
         world.revision++;
@@ -124,16 +116,16 @@
     }
 
     function updateMeetings(world, dt) {
-        // A major story or committed ending must not consume this brief meeting off-screen.
-        const briefPaused = NL.narrativeBlocking(world) || world.sixSevenProgress.pending;
         const nearest = world.nearest();
         for (const character of world.views.values()) {
-            if (character.data.kind !== 'person') {
+            if (
+                character.data.kind !== 'person' ||
+                character.data.briefEncounter
+            ) {
                 continue;
             }
             character.meetingDwell =
-                character === nearest && character.state === 'present' &&
-                !(character.data.briefEncounter && briefPaused)
+                character === nearest && character.state === 'present'
                     ? character.meetingDwell + dt
                     : 0;
             if (character.meetingDwell >= world.c.MEETING_DWELL_SECONDS) {
@@ -206,13 +198,15 @@
             NL.addRecognition(data, world.c.GIFT_RECOGNITION, world.c);
             updateRelationship(data, world.c, true);
         }
-        NL.televisionHint(
-            world,
-            'first-gift',
-            'A way to become friends',
-            'Give a stranger enough meetings to reach 5, and they may become your friend.',
-            85
-        );
+        if (!NL.isBloodRelative(data) && data.kind === 'person' && !wasFriend) {
+            NL.televisionHint(
+                world,
+                'first-gift',
+                'A way to become friends',
+                'Give a stranger enough meetings to reach 5, and they may become your friend.',
+                85
+            );
+        }
         NL.recordTransfer(
             world,
             data,

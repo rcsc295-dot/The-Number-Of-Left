@@ -41,7 +41,11 @@
         PERSONAL_SPACE: 30,
         INTERACTION_RADIUS: 46,
         MEETING_DWELL_SECONDS: 2,
-        BRIEF_ENCOUNTERS: { COUNT: 3, FIRST_AT: 35, INTERVAL: 75, FINAL_HOLD: 2.5 },
+        BRIEF_ENCOUNTERS: {
+            FIRST_AT: 10, INTERVAL: 10, MAX_ACTIVE: 3,
+            SPEED: 85, TURN_RATE: 2.8, PASS_RADIUS: 38,
+            SIDE_OFFSET: 26, ZERO_HOLD: 0.9, FADE_SECONDS: 1.4
+        },
         TAKE_COOLDOWN: 0.65,
         GIVE_COOLDOWN: 0.4,
         FRIEND_GIFT_THRESHOLD: 5, // Protected relatives retain their existing care milestone.

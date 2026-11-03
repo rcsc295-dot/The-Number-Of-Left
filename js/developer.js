@@ -418,6 +418,7 @@
                                 (v) =>
                                     v.data.kind === 'person' &&
                                     !NL.isBloodRelative(v.data) &&
+                                    !v.data.briefEncounter &&
                                     v.state === 'present'
                             )
                             .slice(0, 6)
@@ -490,6 +491,7 @@
                                 (v) =>
                                     v.data.kind === 'person' &&
                                     !NL.isBloodRelative(v.data) &&
+                                    !v.data.briefEncounter &&
                                     v.state === 'present'
                             )
                             .slice(0, 3)

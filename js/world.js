@@ -56,8 +56,6 @@
             for (const d of initialPeople) {
                 this.recurrence.arrive(d, true);
             }
-            const first = this.views.values().next().value;
-            if (first) first.pauseLeft = 5;
             this.family = new NL.FamilySystem(this);
             NL.queueContextHint(this, 'move');
         }
@@ -68,8 +66,8 @@
                 this.c.PERSONAL_SPACE,
                 v
             ) || {
-                x: v.x,
-                y: v.y
+                x: this.c.WIDTH / 2,
+                y: NL.environment(this.c).y + 12
             };
             v.tx = target.x;
             v.ty = target.y;
@@ -82,6 +80,7 @@
             for (const v of this.views.values()) {
                 if (
                     v.state !== 'present' ||
+                    v.data.briefEncounter ||
                     v.data.permanentlyGone ||
                     v.data.encountersLeft <= 0
                 ) {
@@ -164,9 +163,7 @@
                 v.opacity =
                     1 -
                     NL.clamp(
-                        (v.finalElapsed - (d.briefEncounter
-                            ? c.BRIEF_ENCOUNTERS.FINAL_HOLD
-                            : c.FINAL_HOLD)) / c.FINAL_FADE,
+                        (v.finalElapsed - c.FINAL_HOLD) / c.FINAL_FADE,
                         0,
                         1
                     );
@@ -196,13 +193,56 @@
             }
             v.sitting = false;
             if (v.state === 'present') {
-                if (v.waitingTarget) {
+                if (v.passing) {
+                    const pass = v.passing,
+                        config = c.BRIEF_ENCOUNTERS;
+                    if (pass.completed) {
+                        pass.elapsed += dt;
+                        v.opacity =
+                            1 -
+                            NL.clamp(
+                                (pass.elapsed - config.ZERO_HOLD) /
+                                    config.FADE_SECONDS,
+                                0,
+                                1
+                            );
+                        if (v.opacity <= 0) {
+                            this.recurrence.finishDeparture(v);
+                            return;
+                        }
+                    } else {
+                        const lead = Math.min(
+                            1.5,
+                            NL.distance(v, this.player) / v.speed
+                        );
+                        const target = NL.keepInEnvironment(this, {
+                            x:
+                                this.player.x +
+                                this.player.vx * lead -
+                                Math.sin(pass.heading) *
+                                    config.SIDE_OFFSET *
+                                    pass.side,
+                            y:
+                                this.player.y +
+                                this.player.vy * lead +
+                                Math.cos(pass.heading) *
+                                    config.SIDE_OFFSET *
+                                    pass.side
+                        });
+                        const ease = 1 - Math.exp(-dt * 4);
+                        v.tx = NL.lerp(v.tx, target.x, ease);
+                        v.ty = NL.lerp(v.ty, target.y, ease);
+                    }
+                } else if (v.waitingTarget) {
                     v.tx = v.waitingTarget.x;
                     v.ty = v.waitingTarget.y;
                     if (Math.hypot(v.tx - v.x, v.ty - v.y) <= 1) return;
                 } else {
                     v.turnIn -= dt;
-                    if (v.turnIn <= 0 || Math.hypot(v.tx - v.x, v.ty - v.y) < 7) {
+                    if (
+                        v.turnIn <= 0 ||
+                        Math.hypot(v.tx - v.x, v.ty - v.y) < 7
+                    ) {
                         this.randomTarget(v);
                         if (
                             v.visual.movementStyle === 'rest' &&
@@ -227,33 +267,76 @@
             if (v.visual.movementStyle === 'quick') {
                 speed *= c.SPECIAL.QUICK;
             }
-            if (v.state !== 'present') {
-                speed = c.RETURN.EDGE_SPEED;
+            if (v.state !== 'leaving' && !v.passing) {
+                const target = NL.keepInEnvironment(this, { x: v.tx, y: v.ty });
+                v.tx = target.x;
+                v.ty = target.y;
             }
             const dx = v.tx - v.x;
             const dy = v.ty - v.y;
             const length = Math.hypot(dx, dy);
-            if (length > 1) {
-                const travel = Math.min(speed * dt, length);
-                v.x += (dx / length) * travel;
-                v.y += (dy / length) * travel;
+            if (length > 1 || v.passing) {
+                let heading = Math.atan2(dy, dx);
+                if (v.passing) {
+                    const pass = v.passing;
+                    const turn = Math.atan2(
+                        Math.sin(heading - pass.heading),
+                        Math.cos(heading - pass.heading)
+                    );
+                    if (!pass.completed)
+                        pass.heading += NL.clamp(
+                            turn,
+                            -c.BRIEF_ENCOUNTERS.TURN_RATE * dt,
+                            c.BRIEF_ENCOUNTERS.TURN_RATE * dt
+                        );
+                    heading = pass.heading;
+                }
+                const travel = v.passing
+                    ? speed * dt
+                    : Math.min(speed * dt, length);
+                v.x += Math.cos(heading) * travel;
+                v.y += Math.sin(heading) * travel;
                 v.step += travel * 0.2;
                 v.moving = travel > 0.01;
             }
-            if (v.state === 'present') NL.keepInEnvironment(this, v);
+            if (v.passing) {
+                const pass = v.passing,
+                    distance = NL.distance(v, this.player);
+                if (
+                    !pass.completed &&
+                    distance <= c.BRIEF_ENCOUNTERS.PASS_RADIUS &&
+                    distance > pass.closest + 0.05
+                ) {
+                    pass.completed = true;
+                    d.encountersLeft = 0;
+                    d.permanentlyGone = true;
+                    d.lifeStatus = 'closed';
+                    v.previousNumber = 1;
+                    v.feedback = c.FEEDBACK_SECONDS;
+                    this.revision++;
+                    // One quiet hint in the shared TV queue; a major narrative always keeps priority.
+                    NL.televisionHint(
+                        this,
+                        'passing-introduction',
+                        'Only once',
+                        'Some people only pass through your life once.',
+                        30
+                    );
+                }
+                pass.closest = distance;
+            }
             if (
                 v.state === 'entering' &&
                 v.x >= this.bounds.left &&
                 v.x <= this.bounds.right
             ) {
                 v.state = 'present';
+                NL.startFamilyWaiting(this, d);
             }
-            if (
-                v.state === 'leaving' &&
-                (v.x <= this.bounds.left - c.RETURN.MARGIN + 1 ||
-                    v.x >= this.bounds.right + c.RETURN.MARGIN - 1)
-            ) {
-                this.recurrence.finishDeparture(v);
+            if (v.state === 'leaving') {
+                const remaining = Math.hypot(v.tx - v.x, v.ty - v.y);
+                v.opacity = Math.min(1, remaining / 35);
+                if (remaining <= 1) this.recurrence.finishDeparture(v);
             }
         }
 
@@ -261,7 +344,11 @@
             // Soft personal space is visual only. No collision event changes history.
             this.drawList.length = 0;
             for (const v of this.views.values()) {
-                if (v.state === 'present' && v.data.kind === 'person') {
+                if (
+                    v.state === 'present' &&
+                    v.data.kind === 'person' &&
+                    !v.data.briefEncounter
+                ) {
                     this.drawList.push(v);
                 }
             }

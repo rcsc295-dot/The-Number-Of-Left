@@ -324,12 +324,6 @@
                 encountersLeft: template.initialEncounters
             });
         }
-        // Reserve ordinary-looking identities for one unrepeatable meeting each.
-        for (const data of people.filter((d) => !d.template).slice(-c.BRIEF_ENCOUNTERS.COUNT)) {
-            data.briefEncounter = true;
-            data.canTake = false;
-            data.initialEncounters = data.encountersLeft = 1;
-        }
         return people;
     }
 

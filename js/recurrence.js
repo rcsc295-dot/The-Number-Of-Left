@@ -8,13 +8,12 @@
             this.nextSpawn = NL.range(world.rng, world.c.RETURN.SPAWN_INTERVAL);
             this.candidates = [];
             this.nextBriefAt = world.c.BRIEF_ENCOUNTERS.FIRST_AT;
+            this.briefSerial = 0;
             this.nextBloodRelativeAt =
                 world.c.FIRST_BLOOD_RELATIVE_DELAY / 1000;
         }
 
         introductionDue(d) {
-            if (d.briefEncounter)
-                return this.world.time >= this.nextBriefAt;
             if (d.visits > 0) return true;
             return (
                 (!d.template && !NL.isBloodRelative(d)) ||
@@ -27,6 +26,7 @@
 
         eligible(d) {
             return (
+                !d.briefEncounter &&
                 !d.active &&
                 this.introductionDue(d) &&
                 d.lifeStatus === 'present' &&
@@ -56,17 +56,20 @@
             ) {
                 return false;
             }
-            const interior = initial || !!d.template || !!d.briefEncounter;
+            const interior = initial;
             const position = d.template
                 ? NL.getSafeSpawnPosition(w)
                 : NL.openWorldPosition(w, c.PERSONAL_SPACE + 4);
             if (!position) return false;
-            const x = interior
-                ? position.x
-                : w.rng() < 0.5
-                  ? w.bounds.left - 15
-                  : w.bounds.right + 15;
-            const v = new NL.CharacterView(d, x, position.y, w.rng, c);
+            const e = NL.environment(c);
+            const angle = w.rng() * Math.PI * 2;
+            const entry = interior
+                ? position
+                : {
+                      x: e.x + Math.cos(angle) * (e.rx - 20),
+                      y: e.y + 12 + Math.sin(angle) * (e.ry - 32)
+                  };
+            const v = new NL.CharacterView(d, entry.x, entry.y, w.rng, c);
             v.visitLeft *= d.presenceFactor || 1;
             if (!interior) {
                 v.state = 'entering';
@@ -82,10 +85,13 @@
                 w.returns++;
             }
             w.views.set(d.id, v);
-            w.randomTarget(v);
+            if (interior) w.randomTarget(v);
+            else {
+                v.tx = position.x;
+                v.ty = position.y;
+            }
             onStoryArrival(w, v);
             NL.startFamilyWaiting(w, d);
-            if (d.briefEncounter) this.nextBriefAt = w.time + c.BRIEF_ENCOUNTERS.INTERVAL;
             return true;
         }
 
@@ -93,15 +99,13 @@
             v.waitingTarget = null;
             NL.stopFollowing(v.data);
             v.state = 'leaving';
-            v.tx =
-                v.x < this.world.c.WIDTH / 2
-                    ? this.world.bounds.left - this.world.c.RETURN.MARGIN
-                    : this.world.bounds.right + this.world.c.RETURN.MARGIN;
-            v.ty = NL.clamp(
-                v.y,
-                this.world.bounds.top,
-                this.world.bounds.bottom
+            const e = NL.environment(this.world.c);
+            const angle = Math.atan2(
+                (v.y - e.y - 12) / (e.ry - 30),
+                (v.x - e.x) / (e.rx - 18)
             );
+            v.tx = e.x + Math.cos(angle) * (e.rx + 35);
+            v.ty = e.y + 12 + Math.sin(angle) * (e.ry + 35);
         }
 
         finishDeparture(v) {
@@ -110,6 +114,13 @@
             d.active = false;
             NL.stopFollowing(d);
             w.views.delete(d.id);
+            if (w.selected === v) w.selected = null;
+            if (d.briefEncounter) {
+                d.permanentlyGone = true;
+                d.lifeStatus = 'closed';
+                w.usedNames.delete(d.name);
+                return;
+            }
             if (NL.isBloodRelative(d)) {
                 const distant = !!d.familyDistance;
                 const delay = NL.range(
@@ -142,9 +153,90 @@
             if (!w.spawningEnabled) {
                 return;
             }
+            const passing = [...w.views.values()].filter(
+                (v) => v.data.briefEncounter
+            );
+            if (
+                w.time >= this.nextBriefAt &&
+                passing.length < c.BRIEF_ENCOUNTERS.MAX_ACTIVE
+            ) {
+                // One bounded slot on the existing active-world clock; missed ticks never build a backlog.
+                this.nextBriefAt = w.time + c.BRIEF_ENCOUNTERS.INTERVAL;
+                const e = NL.environment(c),
+                    p = w.player;
+                const prediction = NL.keepInEnvironment(w, {
+                    x: p.x + p.vx,
+                    y: p.y + p.vy
+                });
+                let entry = null,
+                    best = Infinity;
+                const startAngle = w.rng() * Math.PI * 2;
+                for (let i = 0; i < 24; i++) {
+                    const angle = startAngle + (i * Math.PI) / 12;
+                    const point = {
+                        x: e.x + Math.cos(angle) * (e.rx - 20),
+                        y: e.y + 12 + Math.sin(angle) * (e.ry - 32)
+                    };
+                    if (
+                        NL.distance(point, p) < 100 ||
+                        [...w.views.values()].some(
+                            (v) => NL.distance(point, v) < 25
+                        )
+                    )
+                        continue;
+                    const distance = NL.distance(point, prediction);
+                    if (distance < best) {
+                        best = distance;
+                        entry = point;
+                    }
+                }
+                if (entry) {
+                    const d = new NL.CharacterData(
+                        'passing-' + ++this.briefSerial,
+                        null,
+                        w.rng,
+                        c
+                    );
+                    Object.assign(d, {
+                        briefEncounter: true,
+                        canTake: false,
+                        initialEncounters: 1,
+                        encountersLeft: 1,
+                        active: true,
+                        visits: 1,
+                        opportunities: []
+                    });
+                    NL.initializeIdentity(w, d);
+                    const v = new NL.CharacterView(
+                        d,
+                        entry.x,
+                        entry.y,
+                        w.rng,
+                        c
+                    );
+                    const heading = Math.atan2(
+                        prediction.y - entry.y,
+                        prediction.x - entry.x
+                    );
+                    const inward =
+                        Math.cos(heading) * (e.y + 12 - p.y) -
+                        Math.sin(heading) * (e.x - p.x);
+                    v.passing = {
+                        heading,
+                        side: inward >= 0 ? 1 : -1,
+                        elapsed: 0,
+                        closest: Infinity,
+                        completed: false
+                    };
+                    v.speed = c.BRIEF_ENCOUNTERS.SPEED;
+                    v.tx = prediction.x;
+                    v.ty = prediction.y;
+                    w.views.set(d.id, v);
+                }
+            }
             const capacity = c.RETURN.CAPACITY;
             const people = [...w.views.values()].filter(
-                (v) => v.data.kind === 'person'
+                (v) => v.data.kind === 'person' && !v.data.briefEncounter
             );
             const newcomer = w.population.find(
                 (d) =>
@@ -203,11 +295,6 @@
                 .sort((a, b) => a.nextReturnAt - b.nextReturnAt)[0];
             if (family) {
                 this.arrive(family);
-                return;
-            }
-            const brief = this.candidates.find((d) => d.briefEncounter);
-            if (brief) {
-                this.arrive(brief);
                 return;
             }
             let ticket = w.rng() * total;

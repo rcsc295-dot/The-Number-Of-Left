@@ -80,7 +80,10 @@
     }
     function separateWorld(world) {
         const people = [...world.views.values()].filter(
-            (v) => v.state === 'present' && v.data.kind === 'person'
+            (v) =>
+                v.state === 'present' &&
+                v.data.kind === 'person' &&
+                !v.data.briefEncounter
         );
         const letters = [...world.views.values()].filter(
             (v) => v.state === 'present' && v.data.kind === 'letter'

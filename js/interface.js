@@ -4,11 +4,16 @@
     const NL = (globalThis.NumberLeft ||= {});
     function relationshipRows(world) {
         return world.population
-            .filter((data) => data.relationship === 'FRIEND')
-            .map(
-                (data) =>
-                    `<tr><td>${data.name}<small>${data.traits.join(' · ')}</small><details><summary>SELF PROFILE</summary><p>${data.selfProfile}</p></details></td><td>${NL.isBloodRelative(data) ? 'BLOOD RELATIVE' : data.relationship}<small>${data.lifeStatus === 'present' ? data.relationshipState : data.lifeStatus === 'closed' ? 'Permanently absent' : 'Departed · reunion possible'} · ${Math.round(data.strength)}/100</small>${NL.isBloodRelative(data) ? '<small>' + NL.familyAvailabilityLabel(data) + '</small>' : ''}</td><td>${data.encountersLeft.toLocaleString('en-US')}</td><td>${data.giftedEncounters}</td><td>${data.timesMet}</td></tr>`
+            .filter((data) =>
+                NL.isBloodRelative(data)
+                    ? data.visits > 0
+                    : data.relationship === 'FRIEND'
             )
+            .map((data) => {
+                if (NL.isBloodRelative(data))
+                    return `<tr><td>${data.familyRole || 'Relative'}<small>${data.selfProfile}</small></td><td>BLOOD RELATIVE<small>${NL.familyAvailabilityLabel(data)}</small></td><td>${data.encountersLeft.toLocaleString('en-US')}</td><td>${data.giftedEncounters}</td><td>${data.timesMet}</td></tr>`;
+                return `<tr><td>${data.name}<small>${data.traits.join(' · ')}</small><details><summary>SELF PROFILE</summary><p>${data.selfProfile}</p></details></td><td>${data.relationship}<small>${data.lifeStatus === 'present' ? data.relationshipState : data.lifeStatus === 'closed' ? 'Permanently absent' : 'Departed · reunion possible'} · ${Math.round(data.strength)}/100</small></td><td>${data.encountersLeft.toLocaleString('en-US')}</td><td>${data.giftedEncounters}</td><td>${data.timesMet}</td></tr>`;
+            })
             .join('');
     }
 
@@ -219,7 +224,8 @@
         updateHUD() {
             NL.renderInformationPanel(this);
             const w = this.world;
-            const nearby = this.playing && w.selected && !w.selected.data.briefEncounter;
+            const nearby =
+                this.playing && w.selected && !w.selected.data.briefEncounter;
             this.ui['nearby-controls'].hidden = !nearby;
             if (nearby) {
                 const x = this.offsetX + w.selected.x * this.scale;

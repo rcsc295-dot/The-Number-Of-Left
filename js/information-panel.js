@@ -122,7 +122,18 @@
         if (panel.hidden) return;
         const major = w.narrative.current,
             pending = w.sixSevenProgress.pending;
-        const hint = w.television.current;
+        const relative = w.selected?.data;
+        const family = NL.isBloodRelative(relative)
+            ? {
+                  title: relative.familyRole || 'Relative',
+                  text: relative.selfProfile
+              }
+            : null;
+        // Family identity is contextual, not a timed or gift-unlocked notification.
+        const hint = family ? null : w.television.current;
+        const hintText = family
+            ? family.title + ': ' + family.text
+            : hint?.text || '';
         const pair = w.sixSevenProgress;
         const candidate = w.views.get(pair.sevenId);
         const content =
@@ -131,7 +142,7 @@
                 ? {
                       title: 'Two people. Two numbers.',
                       // Short hints share the screen below the live numbers, without hiding their changes.
-                      text: pending ? '' : hint?.text || '',
+                      text: pending ? '' : hintText,
                       scoreboard: [
                           '6',
                           pending
@@ -141,7 +152,7 @@
                                 : '?'
                       ]
                   }
-                : hint || routineMessage(w));
+                : family || hint || routineMessage(w));
         // Keep unestablished identities anonymous even in a connected group's consequence.
         // Only presentation text changes; saved identities and history remain intact.
         const anonymousNames = w.population
@@ -190,7 +201,7 @@
         const signature =
             mode +
             '|' +
-            (major?.type || hint?.id || '') +
+            (major?.type || (family && relative.id) || hint?.id || '') +
             '|' +
             (major?.ids?.join(',') || '') +
             '|' +
